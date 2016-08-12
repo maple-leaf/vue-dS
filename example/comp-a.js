@@ -1,9 +1,9 @@
 const compA = Vue.extend({
     name: 'compA',
-    template: '<h1>com-c</h1>',
+    template: '<h1>com-A</h1><p>counter value in compB(will stop fetch value when larger than 5): {{counterFromB}}</p>',
     ready() {
-        this.$dataStreams.$ready('compB', compB => compB.test.onValue(stream => {
-            console.log(stream.newValue);
+        this.$dataStreams.$ready('compB', compB => compB.counter.onValue(stream => {
+            this.counterFromB = stream.newValue;
             if (stream.newValue > 5) {
                 stream.end();
             }
@@ -11,24 +11,8 @@ const compA = Vue.extend({
     },
     data() {
         return {
-            name: 'A',
-            arr: [1,2,2],
-            obj: {
-                a: 1,
-                b: {
-                    c: 2,
-                    d:3
-                }
-            },
-            private: {
-                pa: 1
-            }
+            counterFromB: 0
         };
-    },
-    computed: {
-        test() {
-            return 'B';
-        }
     }
 });
 

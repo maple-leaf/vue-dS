@@ -1,9 +1,9 @@
 const compB = Vue.extend({
     name: 'compB',
-    template: '<h1>{{test}}</h1><button @click="test++">++</button>',
+    template: '<h1>CompB</h1><p>Counter:{{counter}}</p><button @click="counter++">++</button>',
     data() {
         return {
-            test: 1
+            counter: 1
         };
     }
 });
