@@ -1,0 +1,86 @@
+(function () {
+
+    let installed = false;
+
+    function VueDs(Vue, Kefir) {
+        if (installed) {
+            return;
+        }
+
+        if (!Kefir) {
+            if (typeof window !== 'undefined' && window.Kefir) {
+                Kefir = window.Kefir;
+            } else {
+                throw new Error(
+                    'Make sure to pass in Kefir if it is not available globally: Vue.use(VueDs, Kefir)'
+                );
+            }
+        }
+
+        installed = true;
+
+        const dataStreams = {};
+        let readyStreamEmmiter;
+        const readyStream = Kefir.stream(emitter => {
+            readyStreamEmmiter = emitter;
+        });
+        dataStreams.$ready = (component, cb) => {
+            readyStream.onValue(val => {
+                if (val === component) {
+                    cb(dataStreams[component]);
+                }
+            });
+        };
+        Vue.mixin({
+            created() {
+                const name = this.$options.name;
+                if (!readyStreamEmmiter) {
+                    readyStream.onValue(() => {});
+                }
+                const propertiesWillBeObserver = Object.keys(this).filter(key => /^[^_$]/.test(key)).filter(key => key !== 'private');
+                const ownedDataStreamsEmitter = {};
+                if (name) {
+                    const ownedStreams = {};
+                    propertiesWillBeObserver.forEach(property => {
+                        ownedStreams[property] = Kefir.stream(emitter => {
+                            this.$watch(property, (newValue, oldValue) => {
+                                emitter.emit({
+                                    newValue,
+                                    oldValue,
+                                    end: emitter.end
+                                });
+                            }, {
+                                deep: true,
+                                immediate: true
+                            });
+                            ownedDataStreamsEmitter[property] = emitter;
+                        });
+                    });
+                    dataStreams[name] = ownedStreams;
+                }
+                this.$dataStreamsEmitter = ownedDataStreamsEmitter;
+                this.$dataStreams = dataStreams;
+                readyStreamEmmiter.emit(name);
+            },
+            beforeDestroy() {
+                Object.keys(this.$dataStreamsEmitter).forEach(property => {
+                    this.$dataStreamsEmitter[property].end();
+                });
+                delete dataStreams[this.$options.name];
+            }
+        });
+    }
+
+    // auto install
+    if (typeof Vue !== 'undefined') {
+        Vue.use(VueDs);
+    }
+
+    if(typeof exports === 'object' && typeof module === 'object') {
+        module.exports = VueDs;
+    } else if(typeof define === 'function' && define.amd) {
+        define(function () { return VueDs });
+    } else if (typeof window !== 'undefined') {
+        window.VueDs = VueDs;
+    }
+})();

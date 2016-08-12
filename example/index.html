@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+    <head>
+        <script src="//cdn.bootcss.com/vue/1.0.26/vue.js"></script>
+        <script src="//cdn.bootcss.com/kefir/3.3.0/kefir.js"></script>
+    </head>
+    <body>
+        <div id="app">
+            <comp-a></comp-a>
+            <comp-b></comp-b>
+        </div>
+        <script src="../vue-ds.js"></script>
+        <script src="./comp-a.js"></script>
+        <script src="./comp-b.js"></script>
+        <script>
+            new Vue({
+                el: '#app',
+            });
+        </script>
+        
+    </body>
+</html>
