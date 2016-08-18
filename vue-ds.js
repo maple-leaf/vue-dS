@@ -51,7 +51,7 @@
                 if (name) {
                     const ownedStreams = {};
                     propertiesWillBeObserver.forEach(property => {
-                        ownedStreams[property] = Kefir.stream(emitter => {
+                        const dataStream = Kefir.stream(emitter => {
                             this.$watch(property, (newValue, oldValue) => {
                                 emitter.emit({
                                     newValue,
@@ -64,12 +64,24 @@
                             });
                             ownedDataStreamsEmitter[property] = emitter;
                         });
+                        if (dataStreams[name] && dataStreams[name][property]) {
+                            ownedStreams[property] = dataStreams[name][property];
+                        } else {
+                            ownedStreams[property] = Kefir.pool();
+                        }
+                        ownedStreams[property].plug(dataStream);
                     });
                     dataStreams[name] = ownedStreams;
+                    // count components with same name, when first emit ready
+                    if (!dataStreams[name].count) {
+                        dataStreams[name].count = 1;
+                        readyStreamEmmiter.emit(name);
+                    } else {
+                        dataStreams[name].count++;
+                    }
+                    this.$dataStreamsEmitter = ownedDataStreamsEmitter;
+                    this.$dataStreams = dataStreams;
                 }
-                this.$dataStreamsEmitter = ownedDataStreamsEmitter;
-                this.$dataStreams = dataStreams;
-                readyStreamEmmiter.emit(name);
             },
             beforeDestroy() {
                 Object.keys(this.$dataStreamsEmitter).forEach(property => {
