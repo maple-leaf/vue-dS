@@ -3,7 +3,14 @@ const compB = Vue.extend({
     template: '<h1>CompB</h1><p>Counter:{{counter}}</p><button @click="counter++">++</button>',
     data() {
         return {
-            counter: 1
+            counter: 1,
+            privates: 'x',
+            publics: 'y',
+            test: {
+                a: 1
+            },
+            $dSBlackList: ['privates'],
+            $dSWhiteList: ['publics', 'counter']
         };
     }
 });
