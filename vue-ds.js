@@ -37,7 +37,16 @@
                 if (!readyStreamEmmiter) {
                     readyStream.onValue(() => {});
                 }
-                const propertiesWillBeObserver = Object.keys(this).filter(key => /^[^_$]/.test(key)).filter(key => key !== 'private');
+                const propertiesWillBeObserver = Object.keys(this).filter(key => /^[^_$]/.test(key)).filter(key => {
+                    let observeThisProperty = true;
+                    if (this.$data.$dSBlackList) {
+                        observeThisProperty = this.$data.$dSBlackList.indexOf(key) === -1;
+                    }
+                    if (this.$data.$dSWhiteList) {
+                        observeThisProperty = this.$data.$dSWhiteList.indexOf(key) !== -1;
+                    }
+                    return observeThisProperty;
+                });
                 const ownedDataStreamsEmitter = {};
                 if (name) {
                     const ownedStreams = {};
