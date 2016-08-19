@@ -25,11 +25,16 @@
             readyStreamEmmiter = emitter;
         });
         dataStreams.$ready = (component, cb) => {
-            readyStream.onValue(val => {
+            function subCallback(val) {
                 if (val === component) {
                     cb(dataStreams[component]);
+                    unsubscribe();
                 }
-            });
+            }
+            function unsubscribe() {
+                readyStream.offValue(subCallback);
+            }
+            readyStream.onValue(subCallback);
         };
         Vue.mixin({
             created() {
