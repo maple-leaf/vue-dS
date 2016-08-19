@@ -1,6 +1,6 @@
 # vue-ds
 
-vue-ds, 即vue-dataStream缩写。因本插件会是`component`之间产生持续的数据流，并以此来通信，故取此名称。本插件采用[kefir](https://rpominov.github.io/kefir)来
+vue-ds, 即vue-dataStream缩写。因本插件会在`component`之间产生持续的数据流，并以此来通信，故取此名称。本插件采用[kefir](https://rpominov.github.io/kefir)来
 创建数据流。
 
 该插件是为了解决不同`component`间的通信问题，目前`vue`自带的`EventEmiiter`会产生一堆的`$dispatch`, `events`代码，
@@ -52,11 +52,13 @@ Example:
 `$ready`方法接收两个参数: `component-name`, `callback`.
 callback获取一个`Object`，包含所有`component`向外传递数据流的`properties`.
 每个`property`均会有`onValue`方法，该方法获取变更数据流`stream`, `stream`的数据为:
-    {
-        newValue: 'newValue', // current value of property
-        oldValue: 'oldValue', // last value of property
-        end: fn // a function to stop fetch lastest stream of property
-    }
+```
+  {
+    newValue: 'newValue', // current value of property
+    oldValue: 'oldValue', // last value of property
+    end: fn // a function to stop fetch lastest stream of property
+  }
+```
 
 Example:
 
