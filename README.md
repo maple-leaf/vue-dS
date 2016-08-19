@@ -22,6 +22,7 @@ vue-ds, 即vue-dataStream缩写。因本插件会在`component`之间产生持�
 ### howto
 
 - $dSBlackList, $dSWhiteList
+
   每个`component`可以定义这两个私有变量来定义过滤规则，`data`内的`properties`会经过`$dSBlackList`过滤掉黑名单，再经过`$dsWhiteList`过滤掉不在白名单内的`properties`.
 
 Example:
@@ -46,6 +47,7 @@ Example:
     // In this case, only 'publics', and 'counter' will be observed, and emit their values to others components
 
 - $dS
+
 每个`component`都会有一个私有变量`$dS`, 该变量提供`$ready`方法来获取其他`component`的数据流.
 `$ready`方法接收两个参数: `component-name`, `callback`.
 callback获取一个`Object`，包含所有`component`向外传递数据流的`properties`.
