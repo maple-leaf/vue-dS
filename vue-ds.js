@@ -84,8 +84,8 @@
                     } else {
                         dataStreams[name].count++;
                     }
-                    this.$dataStreamsEmitter = ownedDataStreamsEmitter;
-                    this.$dataStreams = dataStreams;
+                    this.$dSEmitter = ownedDataStreamsEmitter;
+                    this.$dS = dataStreams;
                 }
             },
             beforeDestroy() {
