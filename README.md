@@ -102,7 +102,7 @@ vue-dS, 即vue-dataStream缩写。因本插件会在`component`之间产生持�
 每个`component`的值从`created`开始就向外部发送自身的`data`数据流，也在接收其他`component`发送的数据流。`component`之间的关联性可以由某个数据来作为桥梁，监听该数据来改变自身的行为。
 
 
-### 第三方依赖
+### 依赖
 
 - vue
 - kefir
