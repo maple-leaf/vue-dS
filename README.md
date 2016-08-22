@@ -16,7 +16,77 @@ be very hard to reproduce and debug. And `vue-dS` will never allow component to 
 
 Now you can use `vue-dS` to make `component` to send and receive data stream since `created`, and use these stream to make component more interactiable.
 
+### deps
+
+- [vue](vuejs.org)
+- [kefir](https://rpominov.github.io/kefir)
+
+### howto
+
+- $dSBlackList, $dSWhiteList
+
+  Eventy `component` will have these two private variables to define filter rules, the `data` of `component` will be filter by `$dSBlackList` first,
+  , which will filter when match, and then examine by `$dsWhiteList`, which will pass when match. You can use either or both.
+
+Example:
+
+    Vue.extend({
+        name: 'compB',
+        template: '<h1>CompB</h1><p>Counter:{{counter}}</p><button @click="counter++">++</button>',
+        data() {
+            return {
+                counter: 1,
+                privates: 'x',
+                publics: 'y',
+                test: {
+                    a: 1
+                },
+                $dSBlackList: ['privates'], // this will remove 'privates' from list
+                $dSWhiteList: ['publics', 'counter'] // this will only allow 'publics' and 'counter'
+            };
+        }
+    }); 
+
+    // In this case, only 'publics', and 'counter' will be observed, and emit their values to others components
+
+- $dS
+
+    The private variable `$dS` have a `$ready` method to fetch all streams of the `component` by passing the component name. And when the
+    component is start emit data stream, `callback` passed to `$ready` will be called,   and `callback` will get an param, which is a object
+    inclued all `data` passed by `$blackList` and `$whiteList`. Each `data` will have three properties:
+
+```
+  {
+    newValue: 'newValue', // current value of property
+    oldValue: 'oldValue', // last value of property
+    end: fn // a function to stop fetch lastest stream of property
+  }
+```
+
+Example:
+
+    Vue.extend({
+        name: 'compA',
+        template: '<h1>com-A</h1><p>counter value in compB(will stop fetch value when larger than 5): {{counterFromB}} {{event}}</p>',
+        ready() {
+            this.$dS.$ready('compB', compB => {
+                compB.counter.onValue(stream => {
+                    this.counterFromB = stream.newValue; // update number in `compA` when `counter` in `compB` change
+                    if (stream.newValue > 5) {
+                        stream.end();
+                    }
+                });
+            });
+        },
+        data() {
+            return {
+                counterFromB: 0
+            };
+        }
+    });
+
 ---
+
 # 中文文档
 
 vue-dS, 即vue-dataStream缩写。因本插件会在`component`之间产生持续的数据流，并以此来通信，故取此名称。本插件采用[kefir](https://rpominov.github.io/kefir)来创建数据流。
@@ -66,17 +136,17 @@ Example:
 
 - $dS
 
-每个`component`都会有一个私有变量`$dS`, 该变量提供`$ready`方法来获取其他`component`的数据流.
-`$ready`方法接收两个参数: `component-name`, `callback`.
-callback获取一个`Object`，包含所有`component`向外传递数据流的`properties`.
-每个`property`均会有`onValue`方法，该方法获取变更数据流`stream`, `stream`的数据为:
-```
-  {
-    newValue: 'newValue', // current value of property
-    oldValue: 'oldValue', // last value of property
-    end: fn // a function to stop fetch lastest stream of property
-  }
-```
+    每个`component`都会有一个私有变量`$dS`, 该变量提供`$ready`方法来获取其他`component`的数据流.
+    `$ready`方法接收两个参数: `component-name`, `callback`.
+    callback获取一个`Object`，包含所有`component`向外传递数据流的`properties`.
+    每个`property`均会有`onValue`方法，该方法获取变更数据流`stream`, `stream`的数据为:
+    ```
+    {
+        newValue: 'newValue', // current value of property
+        oldValue: 'oldValue', // last value of property
+        end: fn // a function to stop fetch lastest stream of property
+    }
+    ```
 
 Example:
 
@@ -99,5 +169,4 @@ Example:
             };
         }
     });
-
 
