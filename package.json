@@ -1,5 +1,5 @@
 {
-  "name": "vue-ds",
+  "name": "vue-dS",
   "version": "0.0.1",
   "description": "make communication between vue components easy like a breath",
   "main": "vue-ds.js",
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/maple-leaf/vue-ds.git"
+    "url": "git+https://github.com/maple-leaf/vue-dS.git"
   },
   "keywords": [
     "vue",
@@ -22,7 +22,7 @@
   "author": "maple-leaf",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/maple-leaf/vue-ds/issues"
+    "url": "https://github.com/maple-leaf/vue-dS/issues"
   },
-  "homepage": "https://github.com/maple-leaf/vue-ds#readme"
+  "homepage": "https://github.com/maple-leaf/vue-dS#readme"
 }
