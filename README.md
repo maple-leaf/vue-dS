@@ -1,7 +1,25 @@
-# vue-ds
+# vue-dS
+[中文文档戳这里](#中文文档)
 
-vue-ds, 即vue-dataStream缩写。因本插件会在`component`之间产生持续的数据流，并以此来通信，故取此名称。本插件采用[kefir](https://rpominov.github.io/kefir)来
-创建数据流。
+vue-dS is brief of vue-dataStream, which will make `component` able to produce data streams, and use these to communicate. 
+[kefir](https://rpominov.github.io/kefir) is the library used to produce data stream.
+
+If use `EventEmiiter`, component will have write a lot of `$dispatch` and `events`/`$on` code. And if you want these events maintainable, you should
+make a rule to name the event, maybe like `this.$dispath('ComponentName:ActionName')`, and notice you workers about this and hope they follow the guide.
+And about `vuex`, it's good for large and complex project, but create many extra `actions` and `store` for not that complex project, maybe a little overhead.
+
+So I create `vue-dS`, and what this all about is: make component's data, of course allowed by component itself, can be fetch by others component any time and anywhere.
+what data can be fetched can be easily find out by looking the component's `data` model. This is just like fs of Linux, file can be fetch and modify by anyone if they 
+have proper right. Of course, allow componnet to modify data of other component will make some unpredictable behavior and changes, which will be a bug, and the bug will
+be very hard to reproduce and debug. And `vue-dS` will never allow component to modify data directly. 
+
+
+Now you can use `vue-dS` to make `component` to send and receive data stream since `created`, and use these stream to make component more interactiable.
+
+---
+# 中文文档
+
+vue-dS, 即vue-dataStream缩写。因本插件会在`component`之间产生持续的数据流，并以此来通信，故取此名称。本插件采用[kefir](https://rpominov.github.io/kefir)来创建数据流。
 
 该插件是为了解决不同`component`间的通信问题，目前`vue`自带的`EventEmiiter`会产生一堆的`$dispatch`, `events`代码，
 使原本简单的代码变得繁杂。至于第三方的`vuex`，在大项目中或许没什么问题，但是在某些项目中，专门建立`actions`,
