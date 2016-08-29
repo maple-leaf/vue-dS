@@ -1,6 +1,6 @@
 {
   "name": "vue-dS",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "make communication between vue components easy like a breath",
   "main": "vue-ds.js",
   "directories": {
