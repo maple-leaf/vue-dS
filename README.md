@@ -51,7 +51,7 @@ Example:
 
 - $dS
 
-    The private variable `$dS` have a `$ready` method to fetch all streams of the `component` by passing the component name. And when the
+    The private variable `$dS` have a `$ready` method to fetch all streams of the `component` by passing the component name or `ds-name`. And when the
     component is start emit data stream, `callback` passed to `$ready` will be called,   and `callback` will get an param, which is a object
     inclued all `data` passed by `$blackList` and `$whiteList`. Each `data` will have three properties:
 
@@ -69,12 +69,20 @@ Example:
         name: 'compA',
         template: '<h1>com-A</h1><p>counter value in compB(will stop fetch value when larger than 5): {{counterFromB}} {{event}}</p>',
         ready() {
-            this.$dS.$ready('compB', compB => {
+            this.$dS.$ready({name: 'compB'}, compB => {
                 compB.counter.onValue(stream => {
                     this.counterFromB = stream.newValue; // update number in `compA` when `counter` in `compB` change
                     if (stream.newValue > 5) {
                         stream.end();
                     }
+                });
+            });
+
+            // dsName will be define at `comp-b`: <comp-b ds-name="ds-name-for-compB"></comp-b>
+            // comp-b should only have one root element(as recommend by offcial), otherwise will raise a warning, and `vue-ds` will not working on this `comp-b`
+            this.$dS.$ready({dsName: 'ds-name-for-compB'}, compB => {
+                compB.counter.onValue(stream => {
+                    this.counterFromB = stream.newValue; // update number in `compA` when `counter` in `compB` change
                 });
             });
         },
@@ -137,7 +145,7 @@ Example:
 - $dS
 
     每个`component`都会有一个私有变量`$dS`, 该变量提供`$ready`方法来获取其他`component`的数据流.
-    `$ready`方法接收两个参数: `component-name`, `callback`.
+    `$ready`方法接收两个参数: `options`, `callback`. `options`内定义`name`/`dsName`来指定要获取哪个`component`的数据流.
     callback获取一个`Object`，包含所有`component`向外传递数据流的`properties`.
     每个`property`均会有`onValue`方法，该方法获取变更数据流`stream`, `stream`的数据为:
     ```
@@ -160,6 +168,14 @@ Example:
                     if (stream.newValue > 5) {
                         stream.end();
                     }
+                });
+            });
+
+            // dsName will be define at `comp-b`: <comp-b ds-name="ds-name-for-compB"></comp-b>
+            // comp-b should only have one root element(as recommend by offcial), otherwise will raise a warning, and `vue-ds` will not working on this `comp-b`
+            this.$dS.$ready({dsName: 'ds-name-for-compB'}, compB => {
+                compB.counter.onValue(stream => {
+                    this.counterFromB = stream.newValue; // update number in `compA` when `counter` in `compB` change
                 });
             });
         },
