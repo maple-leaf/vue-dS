@@ -1,6 +1,7 @@
 const compB = Vue.extend({
     name: 'compB',
-    template: '<h1>CompB</h1><p>Counter:{{counter}}</p><button @click="counter++">++</button>',
+    template: '<div class="comp-b"><h2>{{title}}</h2><p>Counter:{{counter}}</p><button @click="counter++">++</button></div>',
+    props: ['title'],
     data() {
         return {
             counter: 1,

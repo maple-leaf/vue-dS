@@ -3,19 +3,25 @@
     <head>
         <script src="//cdn.bootcss.com/vue/1.0.26/vue.js"></script>
         <script src="//cdn.bootcss.com/kefir/3.3.0/kefir.js"></script>
+        <style>
+            body {font-size: 14px;}
+            h1 {font-size: 24px;}
+            h2 {font-size: 18px;}
+            .comp-b {margin-left: 20px;}
+            .top {margin-left: 0}
+        </style>
     </head>
     <body>
         <div id="app">
-            <comp-a></comp-a>
-            <comp-b></comp-b>
-            <comp-b></comp-b>
-            <comp-a></comp-a>
-            <comp-b></comp-b>
-            <comp-b></comp-b>
+            <comp-a title="comp-A"></comp-a>
+            <comp-c title="comp-C"></comp-c>
+            <comp-b ds-name="compB-ds-unique-name" title="comp-B with `ds-name` attribute, this will only affect counter of `comp-C`" class="top"></comp-b>
+            <comp-b title="comp-B: will affect counter of `comp-A`" class="top"></comp-b>
         </div>
         <script src="../vue-ds.js"></script>
         <script src="./comp-a.js"></script>
         <script src="./comp-b.js"></script>
+        <script src="./comp-c.js"></script>
         <script>
             new Vue({
                 el: '#app',
