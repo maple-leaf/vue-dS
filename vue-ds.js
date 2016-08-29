@@ -26,8 +26,13 @@
         });
         dataStreams.$ready = (component, cb) => {
             function subCallback(val) {
-                if (val === component) {
-                    cb(dataStreams[component]);
+                if (component.dsName) {
+                    if (val === component.dsName) {
+                        cb(dataStreams[val]);
+                        unsubscribe();
+                    }
+                } else if (val === component.name) {
+                    cb(dataStreams[val]);
                     unsubscribe();
                 }
             }
@@ -37,8 +42,11 @@
             readyStream.onValue(subCallback);
         };
         Vue.mixin({
-            created() {
-                const name = this.$options.name;
+            ready() {
+                if (this.$el.nodeType === 1) {
+                    this.$dsName = this.$el.getAttribute('ds-name');
+                }
+                const name = this.$dsName || this.$options.name;
                 if (!readyStreamEmmiter) {
                     readyStream.onValue(() => {});
                 }
