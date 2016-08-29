@@ -97,8 +97,8 @@
                 }
             },
             beforeDestroy() {
-                Object.keys(this.$dataStreamsEmitter).forEach(property => {
-                    this.$dataStreamsEmitter[property].end();
+                Object.keys(this.$dSEmitter).forEach(property => {
+                    this.$dSEmitter[property].end();
                 });
                 delete dataStreams[this.$options.name];
             }
