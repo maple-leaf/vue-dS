@@ -1,8 +1,8 @@
 <!doctype html>
 <html>
     <head>
-        <script src="//cdn.bootcss.com/vue/1.0.26/vue.js"></script>
-        <script src="//cdn.bootcss.com/kefir/3.3.0/kefir.js"></script>
+        <script src="./vue-1.0.26.js"></script>
+        <script src="./kefir-3.3.0.js"></script>
         <style>
             body {font-size: 14px;}
             h1 {font-size: 24px;}
@@ -16,17 +16,27 @@
             <comp-a title="comp-A"></comp-a>
             <comp-c title="comp-C"></comp-c>
             <comp-b ds-name="compB-ds-unique-name" title="comp-B with `ds-name` attribute, this will only affect counter of `comp-C`" class="top"></comp-b>
-            <comp-b title="comp-B: will affect counter of `comp-A`" class="top"></comp-b>
+            <comp-b title="comp-B: will affect counter of `comp-A`" class="top" v-if="visible"></comp-b>
+            <button @click="visible=!visible">toggle last `comp-b` visible</button>
+            <comp-d title="comp-B: will affect counter of `comp-A`" class="top" v-if="Dvisible"></comp-d>
+            <button @click="Dvisible=!Dvisible">toggle last `comp-b` visible</button>
         </div>
         <script src="../vue-ds.js"></script>
         <script src="./comp-a.js"></script>
         <script src="./comp-b.js"></script>
         <script src="./comp-c.js"></script>
+        <script src="./comp-d.js"></script>
         <script>
             new Vue({
                 el: '#app',
+                data() {
+                    return {
+                        visible: false,
+                        Dvisible: false
+                    };
+                }
             });
         </script>
-        
+
     </body>
 </html>
