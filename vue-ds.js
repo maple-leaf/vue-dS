@@ -24,22 +24,34 @@
         const readyStream = Kefir.stream(emitter => {
             readyStreamEmmiter = emitter;
         });
-        dataStreams.$ready = (component, cb) => {
+        const ready = function(componentName, property, cb) {
+            let componentVueInstance = this;
             function subCallback(val) {
-                if (component.dsName) {
-                    if (val === component.dsName) {
-                        cb(dataStreams[val]);
-                        unsubscribe();
+                if (val === componentName) {
+                    const component = dataStreams[val];
+                    component[property].onValue(cb);
+                    component[property].log();
+                    const subscribers = component.subscribers;
+                    if (subscribers[property]) {
+                        subscribers[property].push(cb);
+                    } else {
+                        subscribers[property] = [cb];
                     }
-                } else if (val === component.name) {
-                    cb(dataStreams[val]);
-                    unsubscribe();
+                    if (componentVueInstance.$dSSubscribedStreams[property]) {
+                        componentVueInstance.$dSSubscribedStreams[property].callbacks.push(cb);
+                    } else {
+                        componentVueInstance.$dSSubscribedStreams[property] = {
+                            observable: component[property],
+                            callbacks: [cb]
+                        };
+                    }
                 }
             }
-            function unsubscribe() {
-                readyStream.offValue(subCallback);
+            if (dataStreams[componentName]) {
+                subCallback(componentName);
+            } else {
+                readyStream.onValue(subCallback);
             }
-            readyStream.onValue(subCallback);
         };
         Vue.mixin({
             ready() {
@@ -62,10 +74,12 @@
                 });
                 const ownedDataStreamsEmitter = {};
                 if (name) {
-                    const ownedStreams = {};
+                    const ownedStreams = {
+                        subscribers: {}
+                    };
                     propertiesWillBeObserver.forEach(property => {
                         const dataStream = Kefir.stream(emitter => {
-                            this.$watch(property, (newValue, oldValue) => {
+                            const unwatch = this.$watch(property, (newValue, oldValue) => {
                                 emitter.emit({
                                     newValue,
                                     oldValue,
@@ -76,6 +90,10 @@
                                 immediate: true
                             });
                             ownedDataStreamsEmitter[property] = emitter;
+
+                            return () => {
+                                unwatch();
+                            };
                         });
                         if (dataStreams[name] && dataStreams[name][property]) {
                             ownedStreams[property] = dataStreams[name][property];
@@ -85,22 +103,37 @@
                         ownedStreams[property].plug(dataStream);
                     });
                     dataStreams[name] = ownedStreams;
-                    // count components with same name, when first emit ready
-                    if (!dataStreams[name].count) {
-                        dataStreams[name].count = 1;
-                        readyStreamEmmiter.emit(name);
-                    } else {
-                        dataStreams[name].count++;
-                    }
+                    readyStreamEmmiter.emit(name);
                     this.$dSEmitter = ownedDataStreamsEmitter;
                     this.$dS = dataStreams;
+                    this.$dS.$ready = ready.bind(this);
+                    this.$dSSubscribedStreams = {};
                 }
             },
             beforeDestroy() {
+                if (this.$el.nodeType === 1) {
+                    this.$dsName = this.$el.getAttribute('ds-name');
+                }
+                const name = this.$dsName || this.$options.name;
                 Object.keys(this.$dSEmitter).forEach(property => {
+                    // terminate owned streams
                     this.$dSEmitter[property].end();
                 });
-                delete dataStreams[this.$options.name];
+                if (name) {
+                    const subscribers = dataStreams[name].subscribers;
+                    const streams = dataStreams[name];
+                    Object.keys(subscribers).forEach(property => {
+                        // release subscriber of owned streams
+                        subscribers[property].forEach(cb => streams[property].offValue(cb));
+                    });
+                }
+                if (this.$dSSubscribedStreams) {
+                    Object.keys(this.$dSSubscribedStreams).forEach(property => {
+                        // unsubscribe streams
+                        const observable = this.$dSSubscribedStreams[property].observable;
+                        this.$dSSubscribedStreams[property].callbacks.forEach(observable.offValue.bind(observable));
+                    });
+                }
             }
         });
     }
