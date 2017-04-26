@@ -1,0 +1,21 @@
+{
+  "name": "vue-ds-editor-example",
+  "version": "1.0.0",
+  "description": "an editor using vue-dS",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "vue-dS",
+    "vue"
+  ],
+  "author": "maple-leaf",
+  "license": "ISC",
+  "dependencies": {
+    "kefir": "^3.6.0",
+    "lodash": "^4.16.6",
+    "vue": "^2.0.3",
+    "vue-dS": "^0.1.0"
+  }
+}

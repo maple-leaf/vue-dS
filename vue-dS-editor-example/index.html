@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>vue-dS editor example</title>
+    </head>
+    <body>
+        <h1>demo using vue2 eventBus</h1>
+        <div id="app">
+            <header-bar></header-bar>
+            <editor></editor>
+            <footer-bar></footer-bar>
+        </div>
+        <textarea id="headerBarTpl" style="display: none">
+            <div>
+                <h3>{{ isEditing ? '编辑中' : ''}}</h3>
+                <button @click="save">保存</button>
+                <hr>
+            </div>
+        </textarea>
+        <textarea id="footerBarTpl" style="display: none">
+            <div>
+                <hr>
+                <p v-show="isEditing">目前字数{{textLen}}, 还可输入{{availableLen}}字</p>
+            </div>
+        </textarea>
+        <textarea id="editorTpl" style="display: none">
+            <div style="display: flex;height:300px;">
+                <emoj v-show="emojVisible"></emoj>
+                <div class="edit-area" style="margin: auto">
+                    <input type="text" v-if="editing" @keydown="editContent" v-model="text" @focus="emojVisible=true">
+                    <div v-else @dblclick="editing=true">{{text}}</div>
+                </div>
+                <toolbar v-show="toolbarVisible"></toolbar>
+            </div>
+        </textarea>
+        <textarea id="emojTpl" style="display: none">
+            <div style="width:100px;text-align:center;background:#eee;">
+                <h4 style="line-height:30px;background: #fff;margin-bottom:10px;" @click="appendEmoj">≈</h4>
+                <h4 style="line-height:30px;background: #fff;margin-bottom:10px;" @click="appendEmoj">ø</h4>
+            </div>
+        </textarea>
+        <textarea id="toolbarTpl" style="display: none">
+            <div style="width:100px;text-align:center;background:#eee;">
+                <h4 style="line-height:30px;background: #fff;margin-bottom:10px;">Bold</h4>
+                <h4 style="line-height:30px;background: #fff;margin-bottom:10px;">Italic</h4>
+            </div>
+        </textarea>
+        <script src="./node_modules/vue/dist/vue.min.js"></script>
+        <script src="./node_modules/kefir/dist/kefir.js"></script>
+        <script src="./node_modules/vue-dS/vue-ds.js"></script>
+        <script src="./header-bar.js"></script>
+        <script src="./footer-bar.js"></script>
+        <script src="./emoj.js"></script>
+        <script src="./toolbar.js"></script>
+        <script src="./editor.js"></script>
+        <script src="./app.js"></script>
+    </body>
+</html>
